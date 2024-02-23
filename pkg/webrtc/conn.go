@@ -28,6 +28,8 @@ type Conn struct {
 	offer  string
 	remote string
 	closed core.Waiter
+
+	createdAt int64
 }
 
 func NewConn(pc *webrtc.PeerConnection) *Conn {
@@ -126,6 +128,8 @@ func NewConn(pc *webrtc.PeerConnection) *Conn {
 			_ = c.Close()
 		}
 	})
+
+	c.createdAt = time.Now().Unix()
 
 	return c
 }

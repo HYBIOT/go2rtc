@@ -2,12 +2,14 @@ package isapi
 
 import (
 	"errors"
-	"github.com/AlexxIT/go2rtc/pkg/core"
-	"github.com/AlexxIT/go2rtc/pkg/tcp"
 	"io"
 	"net"
 	"net/http"
 	"net/url"
+	"time"
+
+	"github.com/AlexxIT/go2rtc/pkg/core"
+	"github.com/AlexxIT/go2rtc/pkg/tcp"
 )
 
 type Client struct {
@@ -20,6 +22,8 @@ type Client struct {
 	medias []*core.Media
 	sender *core.Sender
 	send   int
+
+	createdAt int64
 }
 
 func NewClient(rawURL string) (*Client, error) {
@@ -32,7 +36,7 @@ func NewClient(rawURL string) (*Client, error) {
 	u.Scheme = "http"
 	u.Path = ""
 
-	return &Client{url: u.String()}, nil
+	return &Client{url: u.String(), createdAt: time.Now().Unix()}, nil
 }
 
 func (c *Client) Dial() (err error) {
