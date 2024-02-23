@@ -2,11 +2,14 @@ package streams
 
 import (
 	"net/http"
+	"sync"
 
 	"github.com/AlexxIT/go2rtc/internal/api"
 	"github.com/AlexxIT/go2rtc/internal/app"
 	"github.com/AlexxIT/go2rtc/pkg/probe"
 )
+
+var apiMu sync.Mutex
 
 func apiStreams(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
@@ -21,6 +24,9 @@ func apiStreams(w http.ResponseWriter, r *http.Request) {
 	// Not sure about all this API. Should be rewrited...
 	switch r.Method {
 	case "GET":
+		streamsMu.RLock()
+		defer streamsMu.RUnlock()
+
 		stream := Get(src)
 		if stream == nil {
 			http.Error(w, "", http.StatusNotFound)
@@ -43,6 +49,9 @@ func apiStreams(w http.ResponseWriter, r *http.Request) {
 		}
 
 	case "PUT":
+		apiMu.Lock()
+		defer apiMu.Unlock()
+
 		name := query.Get("name")
 		if name == "" {
 			name = src
@@ -94,6 +103,9 @@ func apiStreams(w http.ResponseWriter, r *http.Request) {
 		}
 
 	case "DELETE":
+		apiMu.Lock()
+		defer apiMu.Unlock()
+
 		delete(streams, src)
 
 		if err := app.PatchConfig(src, nil, "streams"); err != nil {
