@@ -141,7 +141,7 @@ var log zerolog.Logger
 // streams map
 
 var streams = map[string]*Stream{}
-var streamsMu sync.Mutex
+var streamsMu sync.RWMutex
 
 func Get(name string) *Stream {
 	streamsMu.Lock()
