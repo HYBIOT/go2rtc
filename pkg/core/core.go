@@ -100,6 +100,7 @@ type Info struct {
 	Senders    []*Sender   `json:"senders,omitempty"`
 	Recv       int         `json:"recv,omitempty"`
 	Send       int         `json:"send,omitempty"`
+	CreatedAt  int64       `json:"created_at,omitempty"`
 }
 
 const (
@@ -147,6 +148,7 @@ type SuperConsumer struct {
 	Medias     []*Media  `json:"medias,omitempty"`
 	Senders    []*Sender `json:"senders,omitempty"`
 	Send       int       `json:"send,omitempty"`
+	CreatedAt  int64     `json:"created_at,omitempty"`
 }
 
 func (s *SuperConsumer) GetMedias() []*Media {

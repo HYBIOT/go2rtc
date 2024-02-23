@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 	"sync"
+	"time"
 
 	"github.com/AlexxIT/go2rtc/pkg/aac"
 	"github.com/AlexxIT/go2rtc/pkg/core"
@@ -52,6 +53,7 @@ func NewConsumer(medias []*core.Media) *Consumer {
 		wr:    core.NewWriteBuffer(nil),
 	}
 	cons.Medias = medias
+	cons.CreatedAt = time.Now().Unix()
 	return cons
 }
 
