@@ -145,4 +145,4 @@ func Delete(id string) {
 
 var log zerolog.Logger
 var streams = map[string]*Stream{}
-var streamsMu sync.Mutex
+var streamsMu sync.RWMutex
