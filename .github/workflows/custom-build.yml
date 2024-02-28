@@ -5,9 +5,8 @@ on:
   push:
     branches:
       - 'main'
-      - feature/SRE-415
     tags:
-      - 'v*'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
   # build-binaries:
