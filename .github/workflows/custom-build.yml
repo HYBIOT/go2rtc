@@ -110,7 +110,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ github.repository }}
+          images: ${{ secrets.PRIVATE_REGISTRY_HOST }}/services/go2rtc
           tags: |
             type=ref,event=branch
             type=semver,pattern={{version}},enable=false
@@ -156,7 +156,7 @@ jobs:
         id: meta-hw
         uses: docker/metadata-action@v4
         with:
-          images: ${{ github.repository }}
+          images: ${{ secrets.PRIVATE_REGISTRY_HOST }}/services/go2rtc
           flavor: |
             suffix=-hardware
             latest=false
