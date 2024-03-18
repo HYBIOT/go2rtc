@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/url"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -32,6 +33,9 @@ type Conn struct {
 	Medias    []*core.Media
 	UserAgent string
 	URL       *url.URL
+
+	// public custom
+	SkipErrorRTPHeaderSizeInsufficient bool
 
 	// internal
 
@@ -68,6 +72,10 @@ const (
 	MethodPause    = "PAUSE"
 	MethodAnnounce = "ANNOUNCE"
 	MethodRecord   = "RECORD"
+)
+
+const (
+	errRTPHeaderSizeInsufficientForExtensionStr = "RTP header size insufficient for extension"
 )
 
 type State byte
@@ -243,7 +251,14 @@ func (c *Conn) Handle() (err error) {
 		if channelID&1 == 0 {
 			packet := &rtp.Packet{}
 			if err = packet.Unmarshal(buf); err != nil {
-				return
+				// Skip for error RTP header size insufficient for extension
+				if c.SkipErrorRTPHeaderSizeInsufficient {
+					if !strings.Contains(err.Error(), errRTPHeaderSizeInsufficientForExtensionStr) {
+						return
+					}
+				} else {
+					return
+				}
 			}
 
 			for _, receiver := range c.receivers {
