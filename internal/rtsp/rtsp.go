@@ -17,11 +17,12 @@ import (
 func Init() {
 	var conf struct {
 		Mod struct {
-			Listen       string `yaml:"listen" json:"listen"`
-			Username     string `yaml:"username" json:"-"`
-			Password     string `yaml:"password" json:"-"`
-			DefaultQuery string `yaml:"default_query" json:"default_query"`
-			PacketSize   uint16 `yaml:"pkt_size"`
+			Listen                             string `yaml:"listen" json:"listen"`
+			Username                           string `yaml:"username" json:"-"`
+			Password                           string `yaml:"password" json:"-"`
+			DefaultQuery                       string `yaml:"default_query" json:"default_query"`
+			PacketSize                         uint16 `yaml:"pkt_size"`
+			SkipErrorRTPHeaderSizeInsufficient *bool  `yaml:"skip_error_rtp_header_size_insufficient"` // default to true
 		} `yaml:"rtsp"`
 	}
 
@@ -33,6 +34,12 @@ func Init() {
 	app.Info["rtsp"] = conf.Mod
 
 	log = app.GetLogger("rtsp")
+
+	// Custom
+	skipErrorRTPHeaderSizeInsufficient = true
+	if conf.Mod.SkipErrorRTPHeaderSizeInsufficient != nil {
+		skipErrorRTPHeaderSizeInsufficient = *conf.Mod.SkipErrorRTPHeaderSizeInsufficient
+	}
 
 	// RTSP client support
 	streams.HandleFunc("rtsp", rtspHandler)
@@ -97,6 +104,9 @@ func rtspHandler(rawURL string) (core.Producer, error) {
 	conn := rtsp.NewClient(rawURL)
 	conn.Backchannel = true
 	conn.UserAgent = app.UserAgent
+
+	// custom
+	conn.SkipErrorRTPHeaderSizeInsufficient = skipErrorRTPHeaderSizeInsufficient
 
 	if rawQuery != "" {
 		query := streams.ParseQuery(rawQuery)
