@@ -28,6 +28,9 @@ type Conn struct {
 	offer  string
 	remote string
 	closed core.Waiter
+
+	bitrate           int // bytes per second
+	stopBitrateWorker chan struct{}
 }
 
 func NewConn(pc *webrtc.PeerConnection) *Conn {
@@ -131,11 +134,14 @@ func NewConn(pc *webrtc.PeerConnection) *Conn {
 		}
 	})
 
+	c.startBitrateWorker()
+
 	return c
 }
 
 func (c *Conn) Close() error {
 	c.closed.Done(nil)
+	c.stopBitrateWorker <- struct{}{}
 	return c.pc.Close()
 }
 

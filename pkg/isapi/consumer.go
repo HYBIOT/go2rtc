@@ -2,6 +2,7 @@ package isapi
 
 import (
 	"encoding/json"
+
 	"github.com/AlexxIT/go2rtc/pkg/core"
 	"github.com/pion/rtp"
 )
@@ -52,9 +53,10 @@ func (c *Client) Stop() (err error) {
 
 func (c *Client) MarshalJSON() ([]byte, error) {
 	info := &core.Info{
-		Type:   "ISAPI active consumer",
-		Medias: c.medias,
-		Send:   c.send,
+		Type:    "ISAPI active consumer",
+		Medias:  c.medias,
+		Send:    c.send,
+		Bitrate: c.bitrate,
 	}
 	if c.sender != nil {
 		info.Senders = []*core.Sender{c.sender}

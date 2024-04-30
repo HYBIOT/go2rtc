@@ -21,6 +21,9 @@ type Client struct {
 	medias []*core.Media
 	sender *core.Sender
 	send   int
+
+	bitrate           int // bytes per second
+	stopBitrateWorker chan struct{}
 }
 
 func NewClient(rawURL string) (*Client, error) {
@@ -33,7 +36,9 @@ func NewClient(rawURL string) (*Client, error) {
 	u.Scheme = "http"
 	u.Path = ""
 
-	return &Client{url: u.String()}, nil
+	c := &Client{url: u.String()}
+	c.startBitrateWorker()
+	return c, nil
 }
 
 func (c *Client) Dial() (err error) {
@@ -144,6 +149,8 @@ func (c *Client) Close() (err error) {
 	}
 
 	tcp.Close(res)
+
+	c.stopBitrateWorker <- struct{}{}
 
 	return nil
 }
