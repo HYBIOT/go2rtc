@@ -93,6 +93,7 @@ func (c *Conn) MarshalJSON() ([]byte, error) {
 		Senders:    c.senders,
 		Recv:       c.recv,
 		Send:       c.send,
+		Bitrate:    c.bitrate,
 	}
 	return json.Marshal(info)
 }
