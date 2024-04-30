@@ -139,6 +139,8 @@ func NewConn(pc *webrtc.PeerConnection) *Conn {
 		}
 	})
 
+	c.StartBitrateWorker()
+
 	return c
 }
 
@@ -148,6 +150,7 @@ func (c *Conn) MarshalJSON() ([]byte, error) {
 
 func (c *Conn) Close() error {
 	c.closed.Done(nil)
+	c.StopBitrateWorker()
 	return c.pc.Close()
 }
 
