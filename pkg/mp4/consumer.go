@@ -23,6 +23,8 @@ type Consumer struct {
 	Rotate int `json:"-"`
 	ScaleX int `json:"-"`
 	ScaleY int `json:"-"`
+
+	stopBitrateWorker chan struct{}
 }
 
 func NewConsumer(medias []*core.Media) *Consumer {
@@ -52,6 +54,7 @@ func NewConsumer(medias []*core.Media) *Consumer {
 		wr:    core.NewWriteBuffer(nil),
 	}
 	cons.Medias = medias
+	cons.startBitrateWorker()
 	return cons
 }
 
@@ -185,5 +188,6 @@ func (c *Consumer) WriteTo(wr io.Writer) (int64, error) {
 
 func (c *Consumer) Stop() error {
 	_ = c.SuperConsumer.Close()
+	c.stopBitrateWorker <- struct{}{}
 	return c.wr.Close()
 }
