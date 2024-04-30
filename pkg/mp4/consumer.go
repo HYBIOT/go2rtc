@@ -48,7 +48,7 @@ func NewConsumer(medias []*core.Media) *Consumer {
 	}
 
 	wr := core.NewWriteBuffer(nil)
-	return &Consumer{
+	cons := &Consumer{
 		Connection: core.Connection{
 			ID:         core.NewID(),
 			FormatName: "mp4",
@@ -58,6 +58,8 @@ func NewConsumer(medias []*core.Media) *Consumer {
 		muxer: &Muxer{},
 		wr:    wr,
 	}
+	cons.StartBitrateWorker()
+	return cons
 }
 
 func (c *Consumer) AddTrack(media *core.Media, _ *core.Codec, track *core.Receiver) error {

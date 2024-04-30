@@ -50,6 +50,9 @@ type Connection struct {
 	Send      int         `json:"bytes_send,omitempty"`
 
 	Transport any `json:"-"`
+
+	stopBitrateWorker chan struct{} `json:"-"`
+	Bitrate           int           `json:"bitrate,omitempty"` // bytes per second
 }
 
 func (c *Connection) GetMedias() []*Media {
@@ -68,6 +71,8 @@ func (c *Connection) GetTrack(media *Media, codec *Codec) (*Receiver, error) {
 }
 
 func (c *Connection) Stop() error {
+	c.StopBitrateWorker()
+
 	for _, receiver := range c.Receivers {
 		receiver.Close()
 	}
