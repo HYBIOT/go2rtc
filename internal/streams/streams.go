@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"strings"
 	"sync"
 	"time"
 
@@ -47,9 +48,9 @@ func Get(name string) *Stream {
 
 var sanitize = regexp.MustCompile(`\s`)
 
-func New(name string, source string) *Stream {
+func New(name string, source any) *Stream {
 	// not allow creating dynamic streams with spaces in the source
-	if sanitize.MatchString(source) {
+	if src, ok := source.(string); ok && sanitize.MatchString(src) {
 		return nil
 	}
 
@@ -162,13 +163,26 @@ func streamsHandler(w http.ResponseWriter, r *http.Request) {
 			name = src
 		}
 
-		if New(name, src) == nil {
-			http.Error(w, "", http.StatusBadRequest)
-			return
-		}
-
-		if err := app.PatchConfig(name, src, "streams"); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+		if srcs := strings.Split(src, ","); len(srcs) == 1 {
+			if New(name, src) == nil {
+				http.Error(w, "", http.StatusBadRequest)
+				return
+			}
+			if err := app.PatchConfig(name, src, "streams"); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			}
+		} else {
+			srcAny := make([]any, len(srcs))
+			for i, s := range srcs {
+				srcAny[i] = s
+			}
+			if New(name, srcAny) == nil {
+				http.Error(w, "", http.StatusBadRequest)
+				return
+			}
+			if err := app.PatchConfig(name, srcAny, "streams"); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			}
 		}
 
 	case "PATCH":
