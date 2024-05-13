@@ -2,6 +2,7 @@ package streams
 
 import (
 	"net/http"
+	"strings"
 	"sync"
 
 	"github.com/AlexxIT/go2rtc/internal/api"
@@ -57,13 +58,26 @@ func apiStreams(w http.ResponseWriter, r *http.Request) {
 			name = src
 		}
 
-		if New(name, src) == nil {
-			http.Error(w, "", http.StatusBadRequest)
-			return
-		}
-
-		if err := app.PatchConfig(name, src, "streams"); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+		if srcs := strings.Split(src, ","); len(srcs) == 1 {
+			if New(name, src) == nil {
+				http.Error(w, "", http.StatusBadRequest)
+				return
+			}
+			if err := app.PatchConfig(name, src, "streams"); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			}
+		} else {
+			srcAny := make([]any, len(srcs))
+			for i, s := range srcs {
+				srcAny[i] = s
+			}
+			if New(name, srcAny) == nil {
+				http.Error(w, "", http.StatusBadRequest)
+				return
+			}
+			if err := app.PatchConfig(name, srcAny, "streams"); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			}
 		}
 
 	case "PATCH":
