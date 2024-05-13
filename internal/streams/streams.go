@@ -56,8 +56,9 @@ func Validate(source string) error {
 	return nil
 }
 
-func New(name string, source string) *Stream {
-	if Validate(source) != nil {
+func New(name string, source any) *Stream {
+	// not allow creating dynamic streams with spaces in the source
+	if src, ok := source.(string); ok && Validate(src) != nil {
 		return nil
 	}
 
