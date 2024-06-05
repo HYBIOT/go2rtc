@@ -5,6 +5,6 @@ import (
 )
 
 func (c *Conn) startBitrateWorker() {
-	c.stopBitrateWorker = make(chan struct{})
+	c.stopBitrateWorker = make(chan struct{}, 1)
 	go custom.StartBitrateWorker(&c.send, &c.bitrate, c.stopBitrateWorker)
 }
