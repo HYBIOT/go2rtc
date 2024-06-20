@@ -25,5 +25,7 @@ func (c *Connection) StartBitrateWorker() {
 }
 
 func (c *Connection) StopBitrateWorker() {
-	c.stopBitrateWorker <- struct{}{}
+	if c.stopBitrateWorker != nil {
+		c.stopBitrateWorker <- struct{}{}
+	}
 }
