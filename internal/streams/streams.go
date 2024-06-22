@@ -29,6 +29,9 @@ func Init() {
 	api.HandleFunc("api/streams", apiStreams)
 	api.HandleFunc("api/streams.dot", apiStreamsDOT)
 
+	// custom
+	api.HandleFunc("api/custom/streams/speed", apiStreamsSpeed)
+
 	if cfg.Publish == nil {
 		return
 	}
