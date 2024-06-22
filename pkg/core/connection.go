@@ -50,8 +50,10 @@ type Connection struct {
 
 	Transport any `json:"-"`
 
+	// custom
 	stopBitrateWorker chan struct{} `json:"-"`
 	Bitrate           int           `json:"bitrate,omitempty"` // bytes per second
+	Speed             string        `json:"speed,omitempty"`   // empty string indicates normal speed
 }
 
 func (c *Connection) GetMedias() []*Media {

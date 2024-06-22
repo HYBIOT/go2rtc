@@ -313,6 +313,11 @@ func (c *Conn) SetupMedia(media *core.Media) (byte, error) {
 
 func (c *Conn) Play() (err error) {
 	req := &tcp.Request{Method: MethodPlay, URL: c.URL}
+	if c.Speed != "" {
+		req.Header = map[string][]string{
+			"Scale": {c.Speed},
+		}
+	}
 	return c.WriteRequest(req)
 }
 
