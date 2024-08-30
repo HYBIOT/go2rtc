@@ -56,3 +56,32 @@ func apiStreamsSpeed(w http.ResponseWriter, r *http.Request) {
 
 	http.Error(w, "", http.StatusNotFound)
 }
+
+func apiStreamsRemoveConsumers(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "", http.StatusNotFound)
+		return
+	}
+
+	query := r.URL.Query()
+
+	for _, streamName := range query["name"] {
+		if streamName == "" {
+			continue
+		}
+
+		streamsMu.RLock()
+		stream := Get(streamName)
+		streamsMu.RUnlock()
+
+		if stream == nil {
+			continue
+		}
+
+		for _, consumer := range stream.consumers {
+			stream.RemoveConsumer(consumer)
+		}
+	}
+
+	http.Error(w, "", http.StatusOK)
+}
