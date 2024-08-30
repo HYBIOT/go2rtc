@@ -31,6 +31,7 @@ func Init() {
 
 	// custom
 	api.HandleFunc("api/custom/streams/speed", apiStreamsSpeed)
+	api.HandleFunc("api/custom/streams.removeConsumers", apiStreamsRemoveConsumers)
 
 	if cfg.Publish == nil {
 		return
