@@ -41,6 +41,8 @@ func apiStreamsSpeed(w http.ResponseWriter, r *http.Request) {
 		}
 
 		for _, producer := range stream.producers {
+			producer.speed = speedStr
+
 			if conn, ok := producer.conn.(*rtsp.Conn); ok {
 				conn.Connection.Speed = speedStr
 				err := conn.Play()

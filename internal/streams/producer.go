@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/AlexxIT/go2rtc/pkg/core"
+	"github.com/AlexxIT/go2rtc/pkg/rtsp"
 )
 
 type state byte
@@ -34,6 +35,9 @@ type Producer struct {
 	state    state
 	mu       sync.Mutex
 	workerID int
+
+	// custom
+	speed string
 }
 
 const SourceTemplate = "{input}"
@@ -136,6 +140,9 @@ func (p *Producer) MarshalJSON() ([]byte, error) {
 		return json.Marshal(conn)
 	}
 	info := map[string]string{"url": p.url}
+	if p.speed != "" {
+		info["speed"] = p.speed
+	}
 	return json.Marshal(info)
 }
 
@@ -153,6 +160,12 @@ func (p *Producer) start() {
 
 	p.state = stateStart
 	p.workerID++
+
+	if p.speed != "" {
+		if conn, ok := p.conn.(*rtsp.Conn); ok {
+			conn.Connection.Speed = p.speed
+		}
+	}
 
 	go p.worker(p.conn, p.workerID)
 }
