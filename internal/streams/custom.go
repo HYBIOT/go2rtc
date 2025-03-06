@@ -1,8 +1,10 @@
 package streams
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/AlexxIT/go2rtc/pkg/rtsp"
 )
@@ -41,6 +43,10 @@ func apiStreamsSpeed(w http.ResponseWriter, r *http.Request) {
 		}
 
 		for _, producer := range stream.producers {
+			if !isISAPIPlayback(producer.url) {
+				continue
+			}
+
 			producer.speed = speedStr
 
 			if conn, ok := producer.conn.(*rtsp.Conn); ok {
@@ -86,4 +92,25 @@ func apiStreamsRemoveConsumers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Error(w, "", http.StatusOK)
+}
+
+func setupStreamSpeed(stream *Stream, speedStr string) {
+	speedFloat, err := strconv.ParseFloat(speedStr, 64)
+	if err != nil {
+		return
+	}
+
+	speedStr3 := fmt.Sprintf("%.3f", speedFloat)
+
+	for _, producer := range stream.producers {
+		if speedStr3 == "1.000" {
+			producer.speed = ""
+		} else {
+			producer.speed = speedStr
+		}
+	}
+}
+
+func isISAPIPlayback(url string) bool {
+	return strings.Contains(url, "/Streaming/tracks")
 }

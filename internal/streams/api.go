@@ -57,9 +57,14 @@ func apiStreams(w http.ResponseWriter, r *http.Request) {
 			name = src
 		}
 
-		if New(name, query["src"]...) == nil {
+		stream := New(name, query["src"]...)
+		if stream == nil {
 			http.Error(w, "", http.StatusBadRequest)
 			return
+		}
+
+		if speedStr := query.Get("speed"); speedStr != "" {
+			setupStreamSpeed(stream, speedStr)
 		}
 
 		if err := app.PatchConfig(name, query["src"], "streams"); err != nil {
