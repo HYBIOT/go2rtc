@@ -1,12 +1,12 @@
-name: Build and Push
+name: Custom Build and Push
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - 'master'
+      - "master"
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   build-binaries:
@@ -19,7 +19,7 @@ jobs:
 
       - name: Setup Go
         uses: actions/setup-go@v5
-        with: { go-version: '1.24' }
+        with: { go-version: "1.24" }
 
       - name: Build go2rtc_win64
         env: { GOOS: windows, GOARCH: amd64 }
@@ -203,7 +203,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      
+
       - name: Login to GitHub Container Registry
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
