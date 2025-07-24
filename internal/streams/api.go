@@ -24,9 +24,6 @@ func apiStreams(w http.ResponseWriter, r *http.Request) {
 	// Not sure about all this API. Should be rewrited...
 	switch r.Method {
 	case "GET":
-		streamsMu.RLock()
-		defer streamsMu.RUnlock()
-
 		stream := Get(src)
 		if stream == nil {
 			http.Error(w, "", http.StatusNotFound)
