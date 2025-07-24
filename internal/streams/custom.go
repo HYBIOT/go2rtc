@@ -21,9 +21,7 @@ func apiStreamsSpeed(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case "PUT":
-		streamsMu.RLock()
 		stream := Get(streamName)
-		defer streamsMu.RUnlock()
 
 		if stream == nil {
 			http.Error(w, "", http.StatusNotFound)
@@ -78,9 +76,7 @@ func apiStreamsRemoveConsumers(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		streamsMu.RLock()
 		stream := Get(streamName)
-		streamsMu.RUnlock()
 
 		if stream == nil {
 			continue
