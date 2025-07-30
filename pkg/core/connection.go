@@ -53,8 +53,9 @@ type Connection struct {
 
 	// custom
 	stopBitrateWorker chan struct{} `json:"-"`
-	Bitrate           int           `json:"bitrate,omitempty"` // bytes per second
-	Speed             string        `json:"speed,omitempty"`   // empty string indicates normal speed
+	Bitrate           int           `json:"bitrate,omitempty"`       // bytes per second
+	Speed             string        `json:"speed,omitempty"`         // empty string indicates normal speed
+	SpeedHeaders      []string      `json:"speed_headers,omitempty"` // custom speed headers for RTSP
 }
 
 func (c *Connection) GetMedias() []*Media {

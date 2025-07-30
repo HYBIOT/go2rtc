@@ -90,7 +90,7 @@ func apiStreamsRemoveConsumers(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "", http.StatusOK)
 }
 
-func setupStreamSpeed(stream *Stream, speedStr string) {
+func setupStreamSpeed(stream *Stream, speedStr string, speedHeaders []string) {
 	speedFloat, err := strconv.ParseFloat(speedStr, 64)
 	if err != nil {
 		return
@@ -101,8 +101,10 @@ func setupStreamSpeed(stream *Stream, speedStr string) {
 	for _, producer := range stream.producers {
 		if speedStr3 == "1.000" {
 			producer.speed = ""
+			producer.speedHeaders = nil
 		} else {
 			producer.speed = speedStr
+			producer.speedHeaders = speedHeaders
 		}
 	}
 }
