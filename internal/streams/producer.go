@@ -37,7 +37,8 @@ type Producer struct {
 	workerID int
 
 	// custom
-	speed string
+	speed        string
+	speedHeaders []string
 }
 
 const SourceTemplate = "{input}"
@@ -143,6 +144,9 @@ func (p *Producer) MarshalJSON() ([]byte, error) {
 	if p.speed != "" {
 		info["speed"] = p.speed
 	}
+	if len(p.speedHeaders) > 0 {
+		info["speed_headers"] = strings.Join(p.speedHeaders, ",")
+	}
 	return json.Marshal(info)
 }
 
@@ -164,6 +168,7 @@ func (p *Producer) start() {
 	if p.speed != "" {
 		if conn, ok := p.conn.(*rtsp.Conn); ok {
 			conn.Connection.Speed = p.speed
+			conn.Connection.SpeedHeaders = p.speedHeaders
 		}
 	}
 

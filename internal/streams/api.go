@@ -61,7 +61,11 @@ func apiStreams(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if speedStr := query.Get("speed"); speedStr != "" {
-			setupStreamSpeed(stream, speedStr)
+			var speedHeaders []string
+			if query.Has("speed_headers") && len(query["speed_headers"]) > 0 {
+				speedHeaders = query["speed_headers"]
+			}
+			setupStreamSpeed(stream, speedStr, speedHeaders)
 		}
 
 		if err := app.PatchConfig([]string{"streams", name}, query["src"]); err != nil {
